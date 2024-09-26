@@ -61,19 +61,49 @@ public class HttpJob implements Executable {
             ResponseUtils.isExist(httpRequest.getRequestURI()) 이용하여 구현합니다.
         */
 
+        if(!ResponseUtils.isExist(httpRequest.getRequestURI())){
+            try {
+                //404 - not -found
+                client.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return;
+        }
+
 
         /*TODO#8 responseBody에 응답할 html 파일을 읽습니다.
            ResponseUtils.tryGetBodyFromFile(httpRequest.getRequestURI()) 이용하여 구현 합니다.
         */
         String responseBody = null;
+        try {
+            responseBody = ResponseUtils.tryGetBodyFromFile(httpRequest.getRequestURI());
+            log.debug("-----------------");
+            log.debug(responseBody);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
         /*TODO#10 ResponseHeader를 생성합니다.
           ResponseUtils.createResponseHeader() 이용해서 생성합니다. responseHeader를 생성합니다.
         */
-        String responseHeader = null;
+        String responseHeader = ResponseUtils.createResponseHeader(200, httpResponse.getCharacterEncoding(), responseBody.length());
+        log.debug("-----------------");
+        log.debug(responseHeader);
 
         //TODO#12 PrintWriter을 사용 하여 responseHeader, responseBody를 응답합니다.
+        try {
+            PrintWriter printWriter = httpResponse.getWriter();
+
+            printWriter.write(responseHeader);
+            printWriter.write(responseBody);
+
+            printWriter.flush();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
