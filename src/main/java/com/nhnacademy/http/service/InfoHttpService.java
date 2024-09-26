@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Slf4j
 public class InfoHttpService implements HttpService {
@@ -39,6 +40,33 @@ public class InfoHttpService implements HttpService {
     @Override
     public void doGet(HttpRequest httpRequest, HttpResponse httpResponse) {
         //doGet 구현
+
+        String responseBody = null;
+
+        try {
+            responseBody = ResponseUtils.tryGetBodyFormFile(httpRequest.getRequestURI());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        String id = httpRequest.getParameter("id");
+        String name = httpRequest.getParameter("name");
+        String age = httpRequest.getParameter("age");
+
+        responseBody = responseBody.replace("${id}", id);
+        responseBody = responseBody.replace("${name}", name);
+        responseBody = responseBody.replace("${age}", age);
+
+        String responseHeader = ResponseUtils.createResponseHeader(200,"UTF-8",responseBody.length());
+        try(PrintWriter bufferedWriter = httpResponse.getWriter();){
+            bufferedWriter.write(responseHeader);
+            bufferedWriter.write(responseBody);
+            bufferedWriter.flush();
+            log.debug("-------------------------------------------body:{}",responseBody.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

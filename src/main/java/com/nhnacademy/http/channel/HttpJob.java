@@ -70,6 +70,17 @@ public class HttpJob implements Executable {
            httpService.service(httpRequest, httpResponse) 호출하면
            service()에서 Request Method에 의해서 doGet or doPost를 호출 합니다
         */
+        if(httpRequest.getRequestURI().equals("/info.html")){
+            HttpService infohttpService = new InfoHttpService();
+            infohttpService.doGet(httpRequest, httpResponse);
+        }else{
+            HttpService indexhttpService = new IndexHttpService();
+            indexhttpService.doGet(httpRequest, httpResponse);
+        }
+
+
+
+        log.debug("UUUUUUURRRRRRRRLLLLLLL: {}", httpRequest.getRequestURI());
 
 
         try {
