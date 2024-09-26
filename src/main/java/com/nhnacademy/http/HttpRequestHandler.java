@@ -40,6 +40,63 @@ public class HttpRequestHandler implements Runnable {
                 </body>
             </html>
         */
+        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+
+        while(true){
+            try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));)
+            {
+                log.debug("------HTTP-REQUEST_start()");
+                while (true) {
+                    String line = bufferedReader.readLine();
+                    sb.append(line);
+                    log.debug("{}", line);
+                    if(Objects.isNull(line) || line.isBlank()){
+                        break;
+                    }
+                }
+
+                StringBuilder responseHeader = new StringBuilder();
+
+                stringBuilder.append(String.format("<html>%s", System.lineSeparator()));
+                stringBuilder.append(String.format("\t<body>%s", System.lineSeparator()));
+                stringBuilder.append(String.format("\t\t<h1>hello java</h1>%s", System.lineSeparator()));
+                stringBuilder.append(String.format("\t</body>%s", System.lineSeparator()));
+                stringBuilder.append(String.format("</html>%s", System.lineSeparator()));
+
+                responseHeader.append("HTTP/1.0 200 0K\r\n");
+
+                responseHeader.append(String.format("Server: HTTP server/0.1%s",System.lineSeparator()));
+
+                responseHeader.append(String.format("Content-type: text/html; charset=UTF-8%s",System.lineSeparator()));
+
+                responseHeader.append(String.format("Connection: Closed%s",System.lineSeparator()));
+
+
+                responseHeader.append(String.format("Content-Length: %d%s", stringBuilder.length(), System.lineSeparator()));
+
+
+                bufferedWriter.write(responseHeader.toString()+System.lineSeparator());
+                bufferedWriter.write(stringBuilder.toString() + System.lineSeparator());
+                bufferedWriter.flush();
+            }
+            catch (IOException e) {
+                log.error("sock error : {}",e);
+            }finally {
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+
+
+
+
+
 
     }
 }
