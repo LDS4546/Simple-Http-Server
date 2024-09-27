@@ -12,6 +12,8 @@
 
 package com.nhnacademy.http.service;
 
+import com.nhnacademy.http.context.Context;
+import com.nhnacademy.http.context.ContextHolder;
 import com.nhnacademy.http.request.HttpRequest;
 import com.nhnacademy.http.response.HttpResponse;
 import com.nhnacademy.http.util.CounterUtils;
@@ -34,6 +36,9 @@ public class IndexHttpService implements HttpService{
             responseBody = ResponseUtils.tryGetBodyFormFile(httpRequest.getRequestURI());
             //TODO#8 CounterUtils.increaseAndGet()를 이용해서 context에 있는 counter 값을 증가시키고, 반환되는 값을 index.html에 반영 합니다.
             //${count} <-- counter 값을 치환 합니다.
+            responseBody = responseBody.replace("${count}", String.valueOf(CounterUtils.increaseAndGet()));
+            responseBody = responseBody.replace("${userId}", httpRequest.getParameter("userId"));
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);

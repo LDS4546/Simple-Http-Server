@@ -25,6 +25,10 @@ public class CounterUtils {
         * context에 증가된 값을 저장 합니다.
         * */
 
-        return 0l;
+        Context context = ContextHolder.getApplicationContext();
+        long count = (long) context.getAttribute(CONTEXT_COUNTER_NAME);
+        context.setAttribute(CONTEXT_COUNTER_NAME, ++count);
+
+        return count;
     }
 }

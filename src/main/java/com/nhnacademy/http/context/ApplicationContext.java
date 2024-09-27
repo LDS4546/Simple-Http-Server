@@ -29,16 +29,22 @@ public class ApplicationContext  implements Context{
     @Override
     public void setAttribute(String name, Object object) {
         //구현
+        objectMap.put(name, object);
     }
 
     @Override
     public void removeAttribute(String name) {
         //구현
+        objectMap.remove(name);
     }
 
     @Override
     public Object getAttribute(String name) {
         //object가 존재하지 않는다면 ObjectNotFoundException 예외가 발생합니다.
-        return null;
+
+        if(Objects.isNull(objectMap)){
+            throw new ObjectNotFoundException("Object Not Found !");
+        }
+        return objectMap.get(name);
     }
 }
